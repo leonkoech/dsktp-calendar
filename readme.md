@@ -16,7 +16,7 @@ At the moment, it's not fully complete. But you can follow along with the follow
 
 - [x] Get the calendar API Working
 - [x] Read the [rainmeter](https://docs.rainmeter.net/) documentation and create components 
-- [ ] `Python` scripts to emulate the code written in `Lua` as rainmeter is compatible with `Lua`
+- [x] `Python` scripts to emulate the code written in `Lua` as rainmeter is compatible with `Lua`
 - [ ] bash script to call the python scripts at particular times of the day, preferably 7:00 am every morning
 - [ ] bash script to install rainmeter, the requirements of this project and add them to files. Basically automate everything
 - [ ] ** hopefully create a website for this project since i'll probably take it to prod as opensource w/ <100 people for beta
@@ -36,4 +36,7 @@ You'll also need a credentials.json in a .env folder (root) like below
 └───(your python virtual env)
 ```
 # Installation
-Since the project is still underway at 1800 HRS EST 06/25/23, there's still some things required 
+If you have the requiremets met, just run the script
+you'll have a `main.ini` file in the dsktp calendar folder.
+Copy this folder into `C:\Users\{Your name}\Documents\Rainmeter\Skins`
+

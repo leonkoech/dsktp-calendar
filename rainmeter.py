@@ -30,7 +30,7 @@ def createSkin(event_details):
         for data in metadata:
                 skin.write(data)
         metadata.close()
-        print(event_details)
+        event_details = sorted(event_details, key=lambda x: x['start'])
         # write events
         for event in event_details:
             event_template = read_template("components/event.txt")
