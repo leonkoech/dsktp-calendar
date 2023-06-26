@@ -9,9 +9,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from rainmeter import createSkin
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-
 
 def calendarAPI(maxResults):
     result = []
@@ -32,6 +33,7 @@ def calendarAPI(maxResults):
         # Save the credentials for the next run
         with open('.env/token.json', 'w') as token:
             token.write(creds.to_json())
+            token.close()
 
     try:
         service = build('calendar', 'v3', credentials=creds)
@@ -52,14 +54,16 @@ def calendarAPI(maxResults):
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime', event['end'].get('date'))
             htmlLink  = event['htmlLink']
-            summary = event['summary']
+            title = event['summary']
+            status = event['status']
             description = event.get("description", "")
             obj = {
-                start: start,
-                end: end,
-                htmlLink: htmlLink,
-                summary: summary,
-                description: description,
+                "start": (datetime.datetime.strptime(start,  "%Y-%m-%dT%H:%M:%S%z")).strftime("%H:%M"),
+                "end": (datetime.datetime.strptime(end,  "%Y-%m-%dT%H:%M:%S%z")).strftime("%H:%M"),
+                "htmlLink": htmlLink,
+                "title": title,
+                "status": status,
+                "description": description,
             }
             result.append(obj)
         return {"results": result}
@@ -72,9 +76,9 @@ def main():
     result = {}
     try:
         result = query.get("results") # type: ignore
+        createSkin(result)
     except:
-        result = query.get("error") # type: ignore
-    print(result)
+        result = {"queryError:" : query.get("error")}# type: ignore
 
 if __name__ == '__main__':
     main()

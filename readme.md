@@ -22,9 +22,18 @@ At the moment, it's not fully complete. But you can follow along with the follow
 - [ ] ** hopefully create a website for this project since i'll probably take it to prod as opensource w/ <100 people for beta
 
 # Requirements
+
 I used `python 3.9.7` on this project, but it should generally work on `> python 3.8` (?)
 
 Atm rainmeter is required [download here](https://docs.rainmeter.net/manual/installing-rainmeter/)
 
+You'll also need a credentials.json in a .env folder (root) like below
+
+```
+├───.env
+    └───credentials.json
+├───components
+└───(your python virtual env)
+```
 # Installation
 Since the project is still underway at 1800 HRS EST 06/25/23, there's still some things required 

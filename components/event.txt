@@ -1,0 +1,43 @@
+[Container$index]
+Meter= Shape
+Y=(((#Height#)+(#Padding#))*$index)
+Shape=#$theme_container# 
+
+[TimeEvent$index]
+Meter=String
+MeterStyle=FontText
+FontColor = #$theme#
+Text=$start_time - $end_time
+X=#Padding#
+y=((((#Height#)+(#Padding#))*$index)+(#Padding#))
+
+[SummaryEvent$index]
+Meter=String
+MeterStyle=FontText
+FontColor = #$theme#
+Text=$title
+StringStyle = Bold
+W=#Width#
+X=#Padding#
+y=5R
+
+[DescriptionEvent$index]
+Meter=String
+MeterStyle=FontText
+FontColor = #$theme#
+W=((#Width#)-(#Padding#))
+H=#DescriptionHeight#
+DynamicVariables=$index
+AntiAlias=$index
+Text=$description
+X=#Padding#
+y=5R
+
+[LinkEvent$index]
+Meter=Image
+ImageName=#@#$image
+X=((#Width#)-((#Padding#)+32))
+Y=(#YPosition#*$index)+#Padding#
+W=#ImageSize#
+H=#ImageSize#
+LeftMouseUpAction=["$link"]
