@@ -16,15 +16,21 @@ class CalendarAPIService:
         return calendar_list
 
     def fetchCalendarEvents(self, calendarId, maxResults):
-        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        events_result = self.service.events().list(calendarId=calendarId, timeMin=now,
+        now = datetime.datetime.utcnow()
+        min_time = now.isoformat() + 'Z'
+        max_time = now.replace(hour=23, minute=59, second=0, microsecond=0).isoformat() + 'Z'
+        events_result = self.service.events().list(calendarId=calendarId, timeMin=min_time, timeMax=max_time,
                                                 maxResults=maxResults, singleEvents=True,
                                                 orderBy='startTime').execute()
+        print(events_result)
         return events_result.get('items', [])
     
     def formatEvent(self, event):
+        
         start = event['start'].get('dateTime', event['start'].get('date'))
         end = event['end'].get('dateTime', event['end'].get('date'))
+        print(start)
+        print(end)
         htmlLink  = event['htmlLink']
         title = event['summary']
         status = event['status']

@@ -61,8 +61,8 @@ def main():
     result = {}
     try:
         result = query.get("results") # type: ignore
-        destination_dir =  os.getcwd() + "\\dsktp calendar cpy"
-        rainmeter_location = "C:\Program Files\Rainmeter\Rainmeter.exe"
+        destination_dir =  r"C:\Users\{computerName}\Documents\Rainmeter\Skins".format(computerName="17866")
+        rainmeter_location = r"C:\Program Files\Rainmeter\Rainmeter.exe"
         rainmeter_skin_service = RainMeterService(event_details=result,destination=destination_dir, rainmeter=rainmeter_location)
         rainmeter_skin_service.createSkin()
     except:
