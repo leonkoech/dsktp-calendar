@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import datetime
 import os.path
 
@@ -9,9 +7,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from rainmeter import RainMeterService
+from calendarAPI import CalendarAPIService
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-
 
 def calendarAPI(maxResults):
     result = []
@@ -32,49 +32,41 @@ def calendarAPI(maxResults):
         # Save the credentials for the next run
         with open('.env/token.json', 'w') as token:
             token.write(creds.to_json())
+            token.close()
 
     try:
         service = build('calendar', 'v3', credentials=creds)
-
+        #fetch calendar ID objects
+        calendar_service = CalendarAPIService(service=service)
+        calendar_ids = calendar_service.fetchCalendarIds()
+        print(calendar_ids)
         # Call the Calendar API
-        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        events_result = service.events().list(calendarId='primary', timeMin=now,
-                                              maxResults=maxResults, singleEvents=True,
-                                              orderBy='startTime').execute()
-        events = events_result.get('items', [])
-
+        events = calendar_service.fetchCalendarEvents(calendarId="primary", maxResults=maxResults)
+        
         if not events:
             print('No upcoming events found.')
             return {}
 
         # Prints the start and name of the next n events. n is the parameter
         for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            end = event['end'].get('dateTime', event['end'].get('date'))
-            htmlLink  = event['htmlLink']
-            summary = event['summary']
-            description = event.get("description", "")
-            obj = {
-                start: start,
-                end: end,
-                htmlLink: htmlLink,
-                summary: summary,
-                description: description,
-            }
-            result.append(obj)
+            formatted_event = calendar_service.formatEvent(event)
+            result.append(formatted_event)
         return {"results": result}
 
     except HttpError as error:
         return{error: error}
 
 def main():
-    query = calendarAPI(2)
+    query = calendarAPI(5)
     result = {}
     try:
         result = query.get("results") # type: ignore
+        destination_dir =  os.getcwd() + "\\dsktp calendar cpy"
+        rainmeter_location = "C:\Program Files\Rainmeter\Rainmeter.exe"
+        rainmeter_skin_service = RainMeterService(event_details=result,destination=destination_dir, rainmeter=rainmeter_location)
+        rainmeter_skin_service.createSkin()
     except:
-        result = query.get("error") # type: ignore
-    print(result)
+        result = {"queryError:" : query.get("error")}# type: ignore
 
 if __name__ == '__main__':
     main()

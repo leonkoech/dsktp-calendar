@@ -17,9 +17,11 @@ Width=360
 DescriptionHeight=60
 Height=130
 ImageSize = 20
-Dark = 2C2C2C
-Light = FFFFFF
+Light = 2C2C2C
+Dark = FFFFFF
 YPosition = ((#Height#)+(#Padding#))
+LightContainer = Rectangle 0.5,0.5,(#Width#*#Scale#),(#Height#*#Scale#),(12*#Scale#) | Fill Color 47,47,47,0 | StrokeWidth 1.5 | Stroke Color 47,47,47,255
+DarkContainer = Rectangle Rectangle 0.5,0.5,(#Width#*#Scale#),(#Height#*#Scale#),(12*#Scale#)  | Fill Color 44,44,44,100 | StrokeWidth 0 
 
 [FontText]
 FontSize=12
