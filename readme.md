@@ -17,7 +17,7 @@ At the moment, it's not fully complete. But you can follow along with the follow
 - [x] Get the calendar API Working
 - [x] Read the [rainmeter](https://docs.rainmeter.net/) documentation and create components 
 - [x] `Python` scripts to emulate the code written in `Lua` as rainmeter is compatible with `Lua`
-- [ ] bash script to call the python scripts at particular times of the day, preferably 7:00 am every morning
+- [ ] bash script to call the python scripts at particular times of the day, preferably 7:00 am every morning using cron
 - [ ] bash script to install rainmeter, the requirements of this project and add them to files. Basically automate everything
 - [ ] ** hopefully create a website for this project since i'll probably take it to prod as opensource w/ <100 people for beta
 
