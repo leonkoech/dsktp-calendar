@@ -3,14 +3,22 @@ from string import Template
 import os
 import subprocess
 
+"""
+A class that brings all rainmeter services into one 
+the parameters are event_details, destination_directory, and rainmeter directory
+"""
 class RainMeterService:
-        def __init__(self, event_details, destination, rainmeter):
+
+        @classmethod  
+        def createSkin(cls, event_details, destination, rainmeter, skin_name):
+             cls().defineSkin(event_details, destination, rainmeter, skin_name)
+
+        def defineSkin(self, event_details, destination, rainmeter, skin_name):
             self.event_details = event_details
             self.destination_dir = destination
-            self.rainmeter_exe = r'{rainmeter}'.format(rainmeter)
-            self.skin_folder = r'{skin_folder}'.format(destination)
-
-        def createSkin(self):
+            self.rainmeter_exe = rainmeter
+            self.skin_folder = destination
+            self.skin_name = skin_name
             #the event contains some properties as listed below 
             # {
             # status
@@ -19,21 +27,19 @@ class RainMeterService:
             # summary
             # description
             # } 
-
             # important variables for populating events
             light = { 'theme': "Light", "image":"open.png" }
             dark = { 'theme': "Dark", "image":"openlight.png" }
             
-            with open('dsktp calendar/main.ini', 'a') as skin, open('components/metadata.txt','r') as metadata:
+            with open('{skin_name}/main.ini'.format(skin_name=self.skin_name), 'a') as skin, open('components/metadata.txt','r') as metadata:
                 # write metadata
                 for data in metadata:
                         skin.write(data)
                 metadata.close()
                 event_details = sorted(self.event_details, key=lambda x: x['start'])
-                print(event_details)
                 # write events
                 for event in event_details:
-                    event_template = self.read_template("components/event.txt")
+                    event_template = self.readTemplate("components/event.txt")
                     # # index, title, description, theme, start_time, end_time, theme_container
                     # # mama victor
                     index = event_details.index(event)
@@ -57,8 +63,10 @@ class RainMeterService:
                     skin.write(event_data+'\n\n')
                 skin.close()
             self.copySkinFolder()
+            self.loadSkin()
+            self.refreshSkin()
 
-        def read_template(self, filename):
+        def readTemplate(self, filename):
             # Returns a Template object comprising the contents of the 
             # file specified by filename.
             with open(filename, 'r', encoding='utf-8') as template_file:
@@ -66,11 +74,15 @@ class RainMeterService:
             return Template(template_file_content)   
          
         def copySkinFolder(self):
-            source_dir = os.getcwd() + "\\dsktp calendar"
+            source_dir = os.getcwd() + "\\{skin_name}".format(skin_name=self.skin_name)
             if not os.path.exists(self.destination_dir):
                 os.makedirs(self.destination_dir)
             copy_command = "xcopy /s /e /y \"{source}\" \"{destination}\"".format(source=source_dir, destination=self.destination_dir)
             subprocess.call(copy_command, shell = True)
+
+        def loadSkin(self):
+            command = r'"C:\Program Files\Rainmeter\Rainmeter.exe" !ActivateConfig "{skin_name}" "main.ini"'.format(skin_name=self.skin_name)
+            subprocess.run(command, shell=True)
 
         def refreshSkin(self):
             ini_files = [file for file in os.listdir(self.skin_folder) if file.endswith('.ini')]
