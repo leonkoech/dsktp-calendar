@@ -1,8 +1,54 @@
 import datetime
 
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+from credentialsAPI import CredentialsAPIservice
+"""
+Calendar API Service class that performs some services in relation to the google 
+calendar API;
+- fetching calendar IDs
+- fetch Calendar Events
+- format events
+"""
 class CalendarAPIService:
-    def __init__(self, service):
-        self.service = service
+    def __init__(self):
+        self.service = None
+
+    @classmethod
+    def getCalendar(cls, maxResults):
+        return cls().calendarAPI(maxResults)
+    
+    """
+    Main entry point of tha calendar API, does everything from auth to fetching calendar
+    """
+    def calendarAPI(self, maxResults):
+        result = []
+        credentials = CredentialsAPIservice.getCredentials()
+        try:
+            self.service = build('calendar', 'v3', credentials=credentials)
+            #fetch calendar ID objects
+            calendar_ids = self.fetchCalendarIds()
+            print(calendar_ids)
+            # Call the Calendar API
+            events = self.fetchCalendarEvents(calendarId="primary", maxResults=maxResults)
+            
+            if not events:
+                print('No upcoming events found.')
+                return {}
+
+            # Prints the start and name of the next n events. n is the parameter
+            for event in events:
+                formatted_event = self.formatEvent(event)
+                result.append(formatted_event)
+            return {"results": result}
+
+        except HttpError as error:
+            return{error: error}
+
+    """
+    Fetch calendar IDS, will enable a user to select a calendar ID and use that fetch
+    """
     def fetchCalendarIds(self):
         calendar_list=[]
         page_token = None
@@ -15,6 +61,9 @@ class CalendarAPIService:
                 break
         return calendar_list
 
+    """
+    Fetch calendar IDs based on calendarIds
+    """
     def fetchCalendarEvents(self, calendarId, maxResults):
         now = datetime.datetime.utcnow()
         min_time = now.isoformat() + 'Z'
@@ -24,13 +73,13 @@ class CalendarAPIService:
                                                 orderBy='startTime').execute()
         print(events_result)
         return events_result.get('items', [])
-    
+
+    """
+    Formats an event into a format that can be used when creating the skin for the desktop
+    """
     def formatEvent(self, event):
-        
         start = event['start'].get('dateTime', event['start'].get('date'))
         end = event['end'].get('dateTime', event['end'].get('date'))
-        print(start)
-        print(end)
         htmlLink  = event['htmlLink']
         title = event['summary']
         status = event['status']
@@ -43,3 +92,4 @@ class CalendarAPIService:
             "status": status,
             "description": description,
         }
+    
