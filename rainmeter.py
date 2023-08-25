@@ -30,8 +30,9 @@ class RainMeterService:
             # important variables for populating events
             light = { 'theme': "Light", "image":"open.png" }
             dark = { 'theme': "Dark", "image":"openlight.png" }
-            
+            self.deletePrevious()
             with open('{skin_name}/main.ini'.format(skin_name=self.skin_name), 'a') as skin, open('components/metadata.txt','r') as metadata:
+                # light_color, dark_color, and any other custom
                 # write metadata
                 for data in metadata:
                         skin.write(data)
@@ -41,7 +42,6 @@ class RainMeterService:
                 for event in event_details:
                     event_template = self.readTemplate("components/event.txt")
                     # # index, title, description, theme, start_time, end_time, theme_container
-                    # # mama victor
                     index = event_details.index(event)
                     start_time = event.get("start")
                     end_time = event.get("end")
@@ -72,6 +72,18 @@ class RainMeterService:
             with open(filename, 'r', encoding='utf-8') as template_file:
                 template_file_content = template_file.read()
             return Template(template_file_content)   
+        
+        def deletePrevious(self):
+            current_directory = os.getcwd()
+            relative_path = "{skin_name}/main.ini".format(skin_name=self.skin_name)
+            file_to_delete = os.path.join(current_directory, relative_path)
+            try:
+                os.remove(file_to_delete)
+                print(f"File '{file_to_delete}' has been deleted successfully.")
+            except FileNotFoundError:
+                pass
+            except Exception as e:
+                print(f"An error occurred: {e}")
          
         def copySkinFolder(self):
             source_dir = os.getcwd() + "\\{skin_name}".format(skin_name=self.skin_name)
