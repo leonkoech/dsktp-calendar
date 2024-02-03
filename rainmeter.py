@@ -89,6 +89,7 @@ class RainMeterService:
                 os.remove(file_to_delete)
                 print(f"File '{file_to_delete}' has been deleted successfully.")
             except FileNotFoundError:
+                # ignore if the file is missing because for new systems, the plugin is not installed
                 pass
             except Exception as e:
                 print(f"An error occurred: {e}")
@@ -102,12 +103,20 @@ class RainMeterService:
 
         def loadSkin(self):
             command = r'"C:\Program Files\Rainmeter\Rainmeter.exe" !ActivateConfig "{skin_name}" "main.ini"'.format(skin_name=self.skin_name)
-            subprocess.run(command, shell=True)
+            try:
+                subprocess.run(command, shell=True)
+            except Exception as e:
+                print("Error, failed to load skin {}".format(e))
+
 
         def refreshSkin(self):
+            print("attempting to refresh skin at {}".format(self.skin_folder))
             ini_files = [file for file in os.listdir(self.skin_folder) if file.endswith('.ini')]
             for ini_file in ini_files:
                 refresh_command = r'"{rainmeter}" !Refresh "{skin}"'.format(
                     rainmeter=self.rainmeter_exe, skin=os.path.join(self.skin_folder, ini_file)
                 )
-                subprocess.run(refresh_command, shell=True)
+                try:
+                    subprocess.run(refresh_command, shell=True)
+                except Exception as e:
+                    print("Error, failed to load skin {}".format(e))

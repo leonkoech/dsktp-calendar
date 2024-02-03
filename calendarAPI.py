@@ -1,4 +1,5 @@
 import datetime
+from timeService import TimeService
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -28,11 +29,11 @@ class CalendarAPIService:
         try:
             self.service = build('calendar', 'v3', credentials=credentials)
             #fetch calendar ID objects
-            calendar_ids = self.fetchCalendarIds()
-            print(calendar_ids)
+            # calendar_ids = self.fetchCalendarIds()
+            # print(calendar_ids)
             # Call the Calendar API
             events = self.fetchCalendarEvents(calendarId="primary", maxResults=maxResults)
-            
+            print("found {} events".format(len(events)))
             if not events:
                 print('No upcoming events found.')
                 return {}
@@ -65,13 +66,15 @@ class CalendarAPIService:
     Fetch calendar IDs based on calendarIds
     """
     def fetchCalendarEvents(self, calendarId, maxResults):
-        now = datetime.datetime.utcnow()
-        min_time = now.isoformat() + 'Z'
-        max_time = now.replace(hour=23, minute=59, second=0, microsecond=0).isoformat() + 'Z'
+        time_service = TimeService()
+        min_time =  time_service.min_time
+        max_time = time_service.max_time
+
         events_result = self.service.events().list(calendarId=calendarId, timeMin=min_time, timeMax=max_time,
                                                 maxResults=maxResults, singleEvents=True,
                                                 orderBy='startTime').execute()
         print(events_result)
+        print("--------------------------")
         return events_result.get('items', [])
 
     """
@@ -81,7 +84,7 @@ class CalendarAPIService:
         start = event['start'].get('dateTime', event['start'].get('date'))
         end = event['end'].get('dateTime', event['end'].get('date'))
         htmlLink  = event['htmlLink']
-        title = event['summary']
+        title = event.get("summary", "(no title)")
         status = event['status']
         description = event.get("description", "")
         return {
