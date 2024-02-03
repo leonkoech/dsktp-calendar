@@ -1,0 +1,15 @@
+
+
+[Button]
+Meter=String
+Text="Click me!"
+LeftMouseUpAction=[!CommandMeasure "RunDsktpCalendar" "Run"]
+DynamicVariables=1
+
+[RunDsktpCalendar]
+Measure=Plugin
+Plugin=RunCommand
+Program="$python_location"
+Parameter="$script_location"
+State=Hide
+
