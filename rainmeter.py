@@ -2,6 +2,7 @@
 from string import Template
 import os
 import subprocess
+import sys
 
 """
 A class that brings all rainmeter services into one 
@@ -34,8 +35,15 @@ class RainMeterService:
             with open('{skin_name}/main.ini'.format(skin_name=self.skin_name), 'a') as skin, open('components/metadata.txt','r') as metadata:
                 # light_color, dark_color, and any other custom
                 # write metadata
+                plugin_file = "components/plugin.txt"
+                plugin_template = self.readTemplate(plugin_file)
+                python_location = sys.executable
+                script_location = os.path.join(os.getcwd(),"main.py")
+                plugin_template = plugin_template.safe_substitute(python_location = python_location,script_location = script_location)
                 for data in metadata:
-                        skin.write(data)
+                    skin.write(data)
+                for data in plugin_template:
+                    skin.write(data)
                 metadata.close()
                 event_details = sorted(self.event_details, key=lambda x: x['start'])
                 # write events
