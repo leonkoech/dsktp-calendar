@@ -31,19 +31,20 @@ class RainMeterService:
             # important variables for populating events
             light = { 'theme': "Light", "image":"open.png" }
             dark = { 'theme': "Dark", "image":"openlight.png" }
+            current = { 'theme': "Current", "image":"openlight.png" }
             self.deletePrevious()
             with open('{skin_name}/main.ini'.format(skin_name=self.skin_name), 'a') as skin, open('components/metadata.txt','r') as metadata:
                 # light_color, dark_color, and any other custom
                 # write metadata
-                plugin_file = "components/plugin.txt"
-                plugin_template = self.readTemplate(plugin_file)
-                python_location = sys.executable
-                script_location = os.path.join(os.getcwd(),"main.py")
-                plugin_template = plugin_template.safe_substitute(python_location = python_location,script_location = script_location)
+                # plugin_file = "components/plugin.txt"
+                # plugin_template = self.readTemplate(plugin_file)
+                # python_location = sys.executable
+                # script_location = os.path.join(os.getcwd(),"main.py")
+                # plugin_template = plugin_template.safe_substitute(python_location = python_location,script_location = script_location)
                 for data in metadata:
                     skin.write(data)
-                for data in plugin_template:
-                    skin.write(data)
+                # for data in plugin_template:
+                #     skin.write(data)
                 metadata.close()
                 event_details = sorted(self.event_details, key=lambda x: x['start'])
                 # write events
@@ -51,23 +52,23 @@ class RainMeterService:
                     event_template = self.readTemplate("components/event.txt")
                     # # index, title, description, theme, start_time, end_time, theme_container
                     index = event_details.index(event)
-                    start_time = event.get("start")
-                    end_time = event.get("end")
+                    start_time = event.get("start").split(":")
+                    start_time_hh = start_time[0]
+                    start_time_mm = start_time[-1]
+                    end_time = event.get("end").split(":")
+                    end_time_hh = end_time[0]
+                    end_time_mm = end_time[-1]
                     title = event.get("title")
                     description= event.get("description")
-                    theme = dark["theme"] if (event.get("status", "") == "confirmed") else light["theme"]
-                    image = dark["image"] if (event.get("status", "") == "confirmed") else light["image"]
-                    theme_container = theme+"Container"
                     link = event.get("htmlLink")
                     event_data = event_template.safe_substitute(index=index, 
-                                                        start_time = start_time, 
-                                                        end_time= end_time, 
+                                                        start_time_hh = start_time_hh, 
+                                                        start_time_mm = start_time_mm, 
+                                                        end_time_hh= end_time_hh, 
+                                                        end_time_mm= end_time_mm,
                                                         title=title, 
                                                         description= description, 
-                                                        theme=theme, 
-                                                        link=link,
-                                                        image=image,
-                                                        theme_container= theme_container)
+                                                        link=link)
                     skin.write(event_data+'\n\n')
                 skin.close()
             self.copySkinFolder()

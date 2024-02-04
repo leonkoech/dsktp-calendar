@@ -1,20 +1,49 @@
+
+
+
+[SetTheme$index]
+Measure=Calc
+;current
+IfCondition=(((MeasureHr > $start_time_hh) || ((MeasureHr = $start_time_hh) && (MeasureMin >= $start_time_mm))) && ((MeasureHr < $end_time_hh) || ((MeasureHr = $end_time_hh) && (MeasureMin <= $end_time_mm))))
+IfTrueAction=[!SetOption TimeEvent$index FontColor #Current#][!SetOption SummaryEvent$index FontColor #Current#][!SetOption DescriptionEvent$index FontColor #Current#][!ShowMeter "ContainerCurrent$index"][!HideMeter "ContainerDark$index"][!HideMeter "Container$index"][!ShowMeter "LinkEventCurrent$index"][!HideMeter "LinkEvent$index"][!HideMeter "LinkEventDark$index"][!Redraw]
+
+;upcoming
+IfCondition2 = ((MeasureHr < $start_time_hh) || ((MeasureHr = $start_time_hh) && (MeasureMin < $start_time_mm)))
+IfTrueAction2=[!SetOption TimeEvent$index FontColor #Light#][!SetOption SummaryEvent$index FontColor #Light#][!SetOption DescriptionEvent$index FontColor #Light#][!ShowMeter "Container$index"][!HideMeter "ContainerCurrent$index"][!ShowMeter "LinkEvent$index"][!HideMeter "LinkEventCurrent$index"][!HideMeter "LinkEventDark$index"][!Redraw]
+
+;past
+IfCondition3 = ((MeasureHr > $end_time_hh) || ((MeasureHr = $end_time_hh) && (MeasureMin > $end_time_mm)))
+IfTrueAction3=[!SetOption TimeEvent$index FontColor #Dark#][!SetOption SummaryEvent$index FontColor #Dark#][!SetOption DescriptionEvent$index FontColor #Dark#][!ShowMeter "ContainerDark$index"][!HideMeter "ContainerCurrent$index"][!HideMeter "Container$index"][!ShowMeter "LinkEventDark$index"][!HideMeter "LinkEventCurrent$index"][!HideMeter "LinkEvent$index"][!Redraw]
+
+
 [Container$index]
 Meter= Shape
 Y=(((#Height#)+(#Padding#))*$index)
-Shape=#$theme_container# 
+Shape=#LightContainer#
+Hidden = 1
+
+[ContainerDark$index]
+Meter= Shape
+Y=(((#Height#)+(#Padding#))*$index)
+Shape=#DarkContainer#
+Hidden = 1
+
+[ContainerCurrent$index]
+Meter= Shape
+Y=(((#Height#)+(#Padding#))*$index)
+Shape=#CurrentContainer#
+Hidden = 1
 
 [TimeEvent$index]
 Meter=String
 MeterStyle=FontText
-FontColor = #$theme#
-Text=$start_time - $end_time
+Text=$start_time_hh:$start_time_mm - $end_time_hh:$end_time_mm
 X=#Padding#
 y=((((#Height#)+(#Padding#))*$index)+(#Padding#))
 
 [SummaryEvent$index]
 Meter=String
 MeterStyle=FontText
-FontColor = #$theme#
 Text=$title
 StringStyle = Bold
 W=#Width#
@@ -24,7 +53,6 @@ y=5R
 [DescriptionEvent$index]
 Meter=String
 MeterStyle=FontText
-FontColor = #$theme#
 W=((#Width#)-(#Padding#))
 H=#DescriptionHeight#
 DynamicVariables=$index
@@ -35,9 +63,31 @@ y=5R
 
 [LinkEvent$index]
 Meter=Image
-ImageName=#@#$image
+ImageName=#@#open.png
 X=((#Width#)-((#Padding#)+32))
 Y=(#YPosition#*$index)+#Padding#
 W=#ImageSize#
 H=#ImageSize#
 LeftMouseUpAction=["$link"]
+Hidden = 1
+
+[LinkEventDark$index]
+Meter=Image
+ImageName=#@#openlight.png
+X=((#Width#)-((#Padding#)+32))
+Y=(#YPosition#*$index)+#Padding#
+W=#ImageSize#
+H=#ImageSize#
+LeftMouseUpAction=["$link"]
+Hidden = 1
+
+[LinkEventCurrent$index]
+Meter=Image
+ImageName=#@#opencurrent.png
+X=((#Width#)-((#Padding#)+32))
+Y=(#YPosition#*$index)+#Padding#
+W=#ImageSize#
+H=#ImageSize#
+LeftMouseUpAction=["$link"]
+Hidden = 1
+
