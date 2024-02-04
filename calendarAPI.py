@@ -33,9 +33,9 @@ class CalendarAPIService:
             # print(calendar_ids)
             # Call the Calendar API
             events = self.fetchCalendarEvents(calendarId="primary", maxResults=maxResults)
-            print("found {} events".format(len(events)))
+            # print("found {} events".format(len(events)))
             if not events:
-                print('No upcoming events found.')
+                # print('No upcoming events found.')
                 return {}
 
             # Prints the start and name of the next n events. n is the parameter
@@ -73,8 +73,6 @@ class CalendarAPIService:
         events_result = self.service.events().list(calendarId=calendarId, timeMin=min_time, timeMax=max_time,
                                                 maxResults=maxResults, singleEvents=True,
                                                 orderBy='startTime').execute()
-        print(events_result)
-        print("--------------------------")
         return events_result.get('items', [])
 
     """
