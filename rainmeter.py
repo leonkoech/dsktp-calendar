@@ -11,15 +11,16 @@ the parameters are event_details, destination_directory, and rainmeter directory
 class RainMeterService:
 
         @classmethod  
-        def createSkin(cls, event_details, destination, rainmeter, skin_name):
-             cls().defineSkin(event_details, destination, rainmeter, skin_name)
+        def createSkin(cls, event_details, destination, rainmeter, skin_name, max_events):
+             cls().defineSkin(event_details, destination, rainmeter, skin_name, max_events)
 
-        def defineSkin(self, event_details, destination, rainmeter, skin_name):
+        def defineSkin(self, event_details, destination, rainmeter, skin_name, max_events):
             self.event_details = event_details
             self.destination_dir = destination
             self.rainmeter_exe = rainmeter
             self.skin_folder = destination
             self.skin_name = skin_name
+            self.max_events = max_events
             #the event contains some properties as listed below 
             # {
             # status
@@ -29,9 +30,6 @@ class RainMeterService:
             # description
             # } 
             # important variables for populating events
-            light = { 'theme': "Light", "image":"open.png" }
-            dark = { 'theme': "Dark", "image":"openlight.png" }
-            current = { 'theme': "Current", "image":"openlight.png" }
             self.deletePrevious()
             with open('{skin_name}/main.ini'.format(skin_name=self.skin_name), 'a') as skin, open('components/metadata.txt','r') as metadata:
                 # light_color, dark_color, and any other custom
@@ -41,35 +39,68 @@ class RainMeterService:
                 # python_location = sys.executable
                 # script_location = os.path.join(os.getcwd(),"main.py")
                 # plugin_template = plugin_template.safe_substitute(python_location = python_location,script_location = script_location)
+       
                 for data in metadata:
+                    
                     skin.write(data)
                 # for data in plugin_template:
                 #     skin.write(data)
                 metadata.close()
                 event_details = sorted(self.event_details, key=lambda x: x['start'])
                 # write events
-                for event in event_details:
-                    event_template = self.readTemplate("components/event.txt")
-                    # # index, title, description, theme, start_time, end_time, theme_container
-                    index = event_details.index(event)
-                    start_time = event.get("start").split(":")
-                    start_time_hh = start_time[0]
-                    start_time_mm = start_time[-1]
-                    end_time = event.get("end").split(":")
-                    end_time_hh = end_time[0]
-                    end_time_mm = end_time[-1]
-                    title = event.get("title")
-                    description= event.get("description")
-                    link = event.get("htmlLink")
-                    event_data = event_template.safe_substitute(index=index, 
-                                                        start_time_hh = start_time_hh, 
-                                                        start_time_mm = start_time_mm, 
-                                                        end_time_hh= end_time_hh, 
-                                                        end_time_mm= end_time_mm,
-                                                        title=title, 
-                                                        description= description, 
-                                                        link=link)
-                    skin.write(event_data+'\n\n')
+                active_event_length = len(event_details) 
+                prev_height = 0
+                padding = 15
+                for event_index in range(self.max_events):
+                    
+                    if (event_index < self.max_events and event_index < active_event_length):
+                        event = event_details[event_index]
+                        event_template = self.readTemplate("components/event.txt")
+                        # # index, title, description, theme, start_time, end_time, theme_container
+                        index = event_details.index(event)
+                        start_time = event.get("start").split(":")
+                        start_time_hh = start_time[0]
+                        start_time_mm = start_time[-1]
+                        end_time = event.get("end").split(":")
+                        end_time_hh = end_time[0]
+                        end_time_mm = end_time[-1]
+                        title = event.get("title")
+                        description= event.get("description")
+                        container_height = 130 if description != "" else 90
+                        description_height = 60 if description != "" else 1
+                        link = event.get("htmlLink")
+                        event_data = event_template.safe_substitute(index=index, 
+                                                            start_time_hh = start_time_hh, 
+                                                            start_time_mm = start_time_mm, 
+                                                            end_time_hh= end_time_hh, 
+                                                            end_time_mm= end_time_mm,
+                                                            title=title, 
+                                                            description= description, 
+                                                            hidden = 0,
+                                                            height = container_height,
+                                                            description_height = description_height,
+                                                            y_position = prev_height,
+                                                            link=link)
+                        
+                        prev_height += container_height + padding
+                        skin.write(event_data+'\n\n')
+                    elif (event_index >= active_event_length and event_index < self.max_events):
+                        event_template = self.readTemplate("components/event.txt")
+                        
+                        hidden_event_data = event_template.safe_substitute(index=active_event_length+event_index, 
+                                                            start_time_hh = "00", 
+                                                            start_time_mm = "00", 
+                                                            end_time_hh= "23", 
+                                                            end_time_mm= "59",
+                                                            title="no title", 
+                                                            description= "no description", 
+                                                            hidden = 1,
+                                                            height = 1,
+                                                            description_height = 0,
+                                                            y_position = prev_height,
+                                                            link="no link")
+                        prev_height += 1 + padding
+                        skin.write(hidden_event_data+'\n\n')
                 skin.close()
             self.copySkinFolder()
             self.loadSkin()
@@ -84,7 +115,7 @@ class RainMeterService:
         
         def deletePrevious(self):
             current_directory = os.getcwd()
-            relative_path = "{skin_name}/main.ini".format(skin_name=self.skin_name)
+            relative_path = "{skin_name}\main.ini".format(skin_name=self.skin_name)
             file_to_delete = os.path.join(current_directory, relative_path)
             try:
                 os.remove(file_to_delete)
@@ -94,6 +125,7 @@ class RainMeterService:
                 pass
             except Exception as e:
                 print(f"An error occurred: {e}")
+                # pass
          
         def copySkinFolder(self):
             source_dir = os.getcwd() + "\\{skin_name}".format(skin_name=self.skin_name)

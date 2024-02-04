@@ -14,16 +14,10 @@ License = Creative Commons Attribution - Non - Commercial - Share Alike 3.0
 Scale=1
 Padding=15
 Width=360
-DescriptionHeight=60
-Height=130
 ImageSize = 20
 Light = 2C2C2C
 Dark = FFFFFF
 Current = CC33FF
-YPosition = ((#Height#)+(#Padding#))
-LightContainer = Rectangle 0.5,0.5,(#Width#*#Scale#),(#Height#*#Scale#),(12*#Scale#) | Fill Color 47,47,47,0 | StrokeWidth 1.5 | Stroke Color 47,47,47,255
-DarkContainer = Rectangle Rectangle 0.5,0.5,(#Width#*#Scale#),(#Height#*#Scale#),(12*#Scale#)  | Fill Color 44,44,44,100 | StrokeWidth 0 
-CurrentContainer =  Rectangle Rectangle 0.5,0.5,(#Width#*#Scale#),(#Height#*#Scale#),(12*#Scale#)  | Fill Color 204,51,255,100 | StrokeWidth 0 
 
 [FontText]
 FontSize=12
