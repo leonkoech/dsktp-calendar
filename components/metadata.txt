@@ -2,6 +2,8 @@
 Update=1000
 ;DynamicWindowSize=1
 AccurateText=1
+;Refresh every 10 minutes
+OnRefreshAction=[!Delay 600000][!Refresh]
 
 [Metadata]
 Name= dsktp calendar
