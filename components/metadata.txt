@@ -20,6 +20,9 @@ ImageSize = 20
 Light = 2C2C2C
 Dark = FFFFFF
 Current = CC33FF
+MinWindow = 0
+;change to be a variable passed by the code
+WindowSize = 3
 
 [FontText]
 FontSize=12

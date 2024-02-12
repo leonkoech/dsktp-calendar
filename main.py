@@ -1,9 +1,11 @@
+from credentialsAPI import CredentialsAPIservice
 from rainmeter import RainMeterService
 from calendarAPI import CalendarAPIService
 
 def main():
     max_events = 7
-    query = CalendarAPIService.getCalendar(maxResults=max_events)
+    credentials = CredentialsAPIservice.getCredentials()
+    query = CalendarAPIService.getCalendar(credentials=credentials ,maxResults=max_events)
     result = {}
     try:
         result = query.get("results") # type: ignore

@@ -4,7 +4,6 @@ from timeService import TimeService
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from credentialsAPI import CredentialsAPIservice
 """
 Calendar API Service class that performs some services in relation to the google 
 calendar API;
@@ -17,15 +16,15 @@ class CalendarAPIService:
         self.service = None
 
     @classmethod
-    def getCalendar(cls, maxResults):
-        return cls().calendarAPI(maxResults)
+    def getCalendar(cls, credentials, maxResults):
+        return cls().calendarAPI(credentials, maxResults)
     
     """
     Main entry point of tha calendar API, does everything from auth to fetching calendar
     """
-    def calendarAPI(self, maxResults):
+    def calendarAPI(self, credentials, maxResults):
         result = []
-        credentials = CredentialsAPIservice.getCredentials()
+        
         try:
             self.service = build('calendar', 'v3', credentials=credentials)
             #fetch calendar ID objects
@@ -45,7 +44,7 @@ class CalendarAPIService:
             return {"results": result}
 
         except HttpError as error:
-            return{error: error}
+            return {error: error}
 
     """
     Fetch calendar IDS, will enable a user to select a calendar ID and use that fetch

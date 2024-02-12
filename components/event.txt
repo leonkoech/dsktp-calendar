@@ -5,7 +5,7 @@
 Measure=Calc
 ;current
 IfCondition=(($hidden = 0) && ((MeasureHr > $start_time_hh) || ((MeasureHr = $start_time_hh) && (MeasureMin >= $start_time_mm))) && ((MeasureHr < $end_time_hh) || ((MeasureHr = $end_time_hh) && (MeasureMin <= $end_time_mm))))
-IfTrueAction=[!SetOption TimeEvent$index FontColor #Current#][!SetOption SummaryEvent$index FontColor #Current#][!SetOption DescriptionEvent$index FontColor #Current#][!ShowMeter "ContainerCurrent$index"][!HideMeter "ContainerDark$index"][!HideMeter "Container$index"][!ShowMeter "LinkEventCurrent$index"][!HideMeter "LinkEvent$index"][!HideMeter "LinkEventDark$index"][!Redraw]
+IfTrueAction=[!SetOption TimeEvent$index FontColor #Current#][!SetOption SummaryEvent$index FontColor #Current#][!SetOption DescriptionEvent$index FontColor #Current#][!ShowMeter "ContainerCurrent$index"][!HideMeter "ContainerDark$index"][!HideMeter "Container$index"][!ShowMeter "LinkEventCurrent$index"][!HideMeter "LinkEvent$index"][!HideMeter "LinkEventDark$index"][!SetVariable "MinWindow" $index][!Redraw]
 
 ;upcoming
 IfCondition2 = ( ($hidden = 0) &&  (MeasureHr < $start_time_hh) || ((MeasureHr = $start_time_hh) && (MeasureMin < $start_time_mm)))
@@ -15,6 +15,9 @@ IfTrueAction2=[!SetOption TimeEvent$index FontColor #Light#][!SetOption SummaryE
 IfCondition3 = (($hidden = 0) &&  (MeasureHr > $end_time_hh) || ((MeasureHr = $end_time_hh) && (MeasureMin > $end_time_mm)))
 IfTrueAction3=[!SetOption TimeEvent$index FontColor #Dark#][!SetOption SummaryEvent$index FontColor #Dark#][!SetOption DescriptionEvent$index FontColor #Dark#][!ShowMeter "ContainerDark$index"][!HideMeter "ContainerCurrent$index"][!HideMeter "Container$index"][!ShowMeter "LinkEventDark$index"][!HideMeter "LinkEventCurrent$index"][!HideMeter "LinkEvent$index"][!Redraw]
 
+;within window
+IfCondition4 = ((#MinWindow# <= $index) && ((#MinWindow# + #WindowSize#) > $index))
+IfFalseAction4 = [!HideMeter "LinkEventCurrent$index"][!HideMeter "LinkEvent$index"][!HideMeter "LinkEventDark$index"][!HideMeter "ContainerCurrent$index"][!HideMeter "Container$index"][!HideMeter "ContainerDark$index"][!HideMeter "TimeEvent$index"][!HideMeter "SummaryEvent$index"][!HideMeter "DescriptionEvent$index"]
 
 [Container$index]
 Meter= Shape
