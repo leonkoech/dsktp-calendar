@@ -22,7 +22,7 @@ Dark = FFFFFF
 Current = CC33FF
 MinWindow = 0
 ;change to be a variable passed by the code
-WindowSize = 3
+WindowSize = 7
 
 [FontText]
 FontSize=12
@@ -36,3 +36,20 @@ Format=%H
 [MeasureMin]
 Measure=Time
 Format=%M
+
+
+[MeasureTime]
+Measure=Time
+Format=%H:%M
+
+[MeasureRunCmd]
+Measure=Plugin
+Plugin=RunCommand
+Parameter="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" "-ExecutionPolicy Bypass" "C:\Users\17866\Documents\Python Projects\dsktp-calendar\install.ps1"
+IfCondition=(MeasureTime = "16:20")
+IfTrueAction=[!CommandMeasure MeasureRunCmd "Run"]
+
+[MeterRunCmd]
+Meter=String
+Text=None
+DynamicVariables=1

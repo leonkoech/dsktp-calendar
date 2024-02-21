@@ -1,0 +1,36 @@
+{
+  "customization": {
+    "upcoming": {
+      "borderColor": "rgba(47,47,47,255)",
+      "borderWidth": 0.5,
+      "textColor": "#2C2C2C",
+      "textSize": 11,
+      "backgroundColor": "rgba(47,47,47,0)",
+      "borderRadius": 10,
+      "canvasColor": "radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)"
+    },
+    "current": {
+      "borderColor": "transparent",
+      "borderWidth": 0,
+      "textColor": "#CC33FF",
+      "textSize": 11,
+      "backgroundColor": "rgba(204,51,255,0.5)",
+      "borderRadius": 10,
+      "canvasColor": "linear-gradient(90deg, rgba(249,255,171,1) 0%, rgba(235,212,255,1) 100%)"
+    },
+    "inactive": {
+      "borderColor": "transparent",
+      "borderWidth": 0,
+      "textColor": "#FFFFFF",
+      "textSize": 11,
+      "backgroundColor": "rgba(44,44,44,100)",
+      "borderRadius": 10,
+      "canvasColor": "linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,172,172,1) 47%, rgba(78,255,205,1) 100%)"
+    }
+  },
+  "options": {
+    "maxComponentCount": 7,
+    "maxFetchCount": 1,
+    "fetchTime": "07:30"
+  }
+}
